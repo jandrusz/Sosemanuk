@@ -8,8 +8,11 @@ class MainWindow {
 
     private static MainWindow instance = null;
 
+    private Algorithm algorithm;
+
     private MainWindow() {
         getMainFrame();
+        algorithm = new AlgorithmImpl();
     }
 
     static MainWindow getInstance() {
@@ -48,15 +51,10 @@ class MainWindow {
     }
 
     private void setListenerForButton(JButton button) {
-        button.addActionListener(e -> {
-            System.out.println("!!!");
-        });
+        button.addActionListener(e -> algorithm.start());
     }
 
     private void addComponentToContentPane(JFrame frame, JComponent component) {
         frame.getContentPane().add(component);
     }
-
-    //TODO many other things to show, set and click
-
 }

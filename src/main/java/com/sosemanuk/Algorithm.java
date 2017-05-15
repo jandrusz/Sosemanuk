@@ -1,19 +1,20 @@
 package com.sosemanuk;
 
-public class Algorithm {
+interface Algorithm {
 
-    //TODO Main body of algoithm - magic will happen here
+    void initializeMasterStateWithKey(int key, int size);
 
-    public void initializeMasterStateWithKey(SosemanukMasterState sosemanukMasterState, int key, int size) {
+    void initializeWithInitializationVector(byte initializationVector);
 
-    }
+    void extract(byte stream);
 
-    public void initializeWithInitializationVector(SosemanukState sosemanukState, SosemanukMasterState sosemanukMasterState, byte initializationVector) {
+    void sBoxApply(Integer sBoxIndex, Integer[] in, Integer[] out);
 
-    }
+    Integer lfsrStep();
 
-    public void extract(SosemanukState sosemanukState, byte stream){
+    void serpentRound(Integer index, Integer[] data);
 
-    }
+    Integer automatonStep();
 
+    void start();
 }
