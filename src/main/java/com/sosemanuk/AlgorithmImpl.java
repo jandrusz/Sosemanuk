@@ -24,40 +24,40 @@ class AlgorithmImpl implements Algorithm {
     }
 
     public void sBoxApply(Integer sBoxIndex, Integer[] in, Integer[] out) {
-        switch (sBoxIndex) {
-            case 0: {
-                SerpentBitsliceSBox.sb0(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-            case 1: {
-                SerpentBitsliceSBox.sb1(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-            case 2: {
-                SerpentBitsliceSBox.sb2(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-            case 3: {
-                SerpentBitsliceSBox.sb3(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-            case 4: {
-                SerpentBitsliceSBox.sb4(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-            case 5: {
-                SerpentBitsliceSBox.sb5(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-            case 6: {
-                SerpentBitsliceSBox.sb6(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-            case 7: {
-                SerpentBitsliceSBox.sb7(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
-                break;
-            }
-        }
+//        switch (sBoxIndex) {
+//            case 0: {
+//                SerpentBitsliceSBox.sb0(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//            case 1: {
+//                SerpentBitsliceSBox.sb1(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//            case 2: {
+//                SerpentBitsliceSBox.sb2(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//            case 3: {
+//                SerpentBitsliceSBox.sb3(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//            case 4: {
+//                SerpentBitsliceSBox.sb4(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//            case 5: {
+//                SerpentBitsliceSBox.sb5(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//            case 6: {
+//                SerpentBitsliceSBox.sb6(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//            case 7: {
+//                SerpentBitsliceSBox.sb7(in[0], in[1], in[2], in[3], out[0], out[1], out[2], out[3]);
+//                break;
+//            }
+//        }
     }
 
     public Integer lfsrStep() {
