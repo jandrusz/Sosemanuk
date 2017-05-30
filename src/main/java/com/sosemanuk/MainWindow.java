@@ -1,10 +1,12 @@
 package com.sosemanuk;
 
+import com.sosemanuk.utils.Stoper;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
-class MainWindow {
+public class MainWindow {
 
     private static MainWindow instance = null;
 
@@ -14,7 +16,7 @@ class MainWindow {
 
     private static JTextField inputKeyTextField;
 
-    private static JTextField initialVectorTextField;
+    private static JTextField initialValueTextField;
 
     private static JTextArea area;
 
@@ -32,7 +34,7 @@ class MainWindow {
         setFrameProperties(frame);
         setContentPaneProperties(frame);
         addComponentToContentPane(frame, getInputKeyTextField());
-        addComponentToContentPane(frame, getInitialVectorTextField());
+        addComponentToContentPane(frame, getInitialValueTextField());
         addComponentToContentPane(frame, getLabelForInputKeyTextField());
         addComponentToContentPane(frame, getLabelForInitialVectorTextField());
         addComponentToContentPane(frame, getTextArea());
@@ -41,7 +43,7 @@ class MainWindow {
 
     private void setFrameProperties(JFrame frame) {
         frame.setTitle("Sosemanuk");
-        frame.setBounds(400, 200, 800, 350);
+        frame.setBounds(400, 200, 900, 600);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
@@ -58,25 +60,25 @@ class MainWindow {
         button.setForeground(Color.BLACK);
         button.setBackground(SystemColor.menu);
         button.setFont(new Font("Arial", Font.PLAIN, 16));
-        button.setBounds(20, 250, 350, 50);
+        button.setBounds(20, 500, 350, 50);
         setListenerForButton(button);
         return button;
     }
 
     private JTextField getInputKeyTextField() {
-        inputKeyTextField = new JTextField("§À\u0083þ·");
+        inputKeyTextField = new JTextField();
         inputKeyTextField.setFont(new Font("Arial", Font.PLAIN, 16));
         inputKeyTextField.setHorizontalAlignment(SwingConstants.LEFT);
         inputKeyTextField.setBounds(150, 57, 200, 32);
         return inputKeyTextField;
     }
 
-    private JTextField getInitialVectorTextField() {
-        initialVectorTextField = new JTextField(" \u0011\"3DUfwª»ÌÝîÿ");
-        initialVectorTextField.setFont(new Font("Arial", Font.PLAIN, 16));
-        initialVectorTextField.setHorizontalAlignment(SwingConstants.LEFT);
-        initialVectorTextField.setBounds(150, 120, 200, 32);
-        return initialVectorTextField;
+    private JTextField getInitialValueTextField() {
+        initialValueTextField = new JTextField();
+        initialValueTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        initialValueTextField.setHorizontalAlignment(SwingConstants.LEFT);
+        initialValueTextField.setBounds(150, 120, 200, 32);
+        return initialValueTextField;
     }
 
     private JLabel getLabelForInputKeyTextField() {
@@ -99,9 +101,21 @@ class MainWindow {
         area = new JTextArea();
         area.setFont(new Font("Arial", Font.PLAIN, 16));
         area.setBackground(Color.WHITE);
-        area.setBounds(400, 10, 350, 290);
+        area.setBounds(400, 10, 450, 540);
         area.setEditable(false);
         area.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        return area;
+    }
+
+    private void addComponentToContentPane(JFrame frame, JComponent component) {
+        frame.getContentPane().add(component);
+    }
+
+    public static void print(String text) {
+        MainWindow.getArea().append(text);
+    }
+
+    static JTextArea getArea() {
         return area;
     }
 
@@ -120,24 +134,24 @@ class MainWindow {
 
         button.addActionListener(e -> {
             area.setText("");
-            sosemanuk.start(getKey(inputKey), iv); //TODO convert input from user to byte in hex
+            if (!Objects.equals(inputKeyTextField.getText(), "") || !Objects.equals(initialValueTextField.getText(), "")) {
+                Stoper.start();
+                sosemanuk.start(getKey(inputKeyTextField.getText().getBytes()), initialValueTextField.getText().getBytes());
+            } else {
+                Stoper.start();
+                sosemanuk.start(getKey(inputKey), iv);
+            }
         });
     }
 
     private byte[] getKey(byte[] inputKey) {
         if (inputKey.length < 0 || inputKey.length > 32) {
-            MainWindow.getArea().append("Key should be longer/shorter");
-        } else if (inputKey.length == 32) {
+            print("INPUT KEY should be longer/shorter");
+        }
+
+        if (inputKey.length == 32) {
             return inputKey;
         }
         return sosemanuk.expandKey(inputKey);
-    }
-
-    private void addComponentToContentPane(JFrame frame, JComponent component) {
-        frame.getContentPane().add(component);
-    }
-
-    static JTextArea getArea() {
-        return area;
     }
 }

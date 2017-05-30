@@ -1,5 +1,9 @@
 package com.sosemanuk;
 
+import com.sosemanuk.utils.Converter;
+import com.sosemanuk.utils.Formatter;
+import com.sosemanuk.utils.Stoper;
+
 class Sosemanuk {
 
     private int[][] subKeys = new int[25][4];
@@ -38,14 +42,14 @@ class Sosemanuk {
     private void keySchedule(byte[] key) {
         int w0, w1, w2, w3, w4, w5, w6, w7;
 
-        w0 = convertToInt(key, 0);
-        w1 = convertToInt(key, 4);
-        w2 = convertToInt(key, 8);
-        w3 = convertToInt(key, 12);
-        w4 = convertToInt(key, 16);
-        w5 = convertToInt(key, 20);
-        w6 = convertToInt(key, 24);
-        w7 = convertToInt(key, 28);
+        w0 = Converter.convertToInt(key, 0);
+        w1 = Converter.convertToInt(key, 4);
+        w2 = Converter.convertToInt(key, 8);
+        w3 = Converter.convertToInt(key, 12);
+        w4 = Converter.convertToInt(key, 16);
+        w5 = Converter.convertToInt(key, 20);
+        w6 = Converter.convertToInt(key, 24);
+        w7 = Converter.convertToInt(key, 28);
 
         int[] w = new int[100];
         w0 = Integer.rotateLeft(w0 ^ w3 ^ w5 ^ w7 ^ 0x9e3779b9, 11);
@@ -75,32 +79,31 @@ class Sosemanuk {
             subKeys[i] = SerpentBitsliceSBox.sBox(sBoxNumber, w[4 * i], w[4 * i + 1], w[4 * i + 2], w[4 * i + 3], w[4 * i]);
         }
 
-        MainWindow.getArea().append("SUBKEY99: " + subKeys[24][3]);
-    }
-
-    private int convertToInt(byte[] key, int i) {
-        return ((key[i + 3] & 0xFF) << 24) | ((key[i + 2] & 0xFF) << 16)
-                | ((key[i + 1] & 0xFF) << 8) | (key[i] & 0xFF);
+        MainWindow.print("SUBKEY99: " + subKeys[24][3] + "\n");
     }
 
     // TODO change
     private void setInitialValue(byte[] iv) {
-        if (iv.length > 16)
+        if (iv.length > 16) {
+            MainWindow.print("bad INITIAL VALUE length: " + iv.length);
             throw new Error("bad IV length: " + iv.length);
+        }
+
         if (iv.length == 16) {
             piv = iv;
-        } else {
-            System.arraycopy(iv, 0, piv, 0, iv.length);
-            for (int i = iv.length; i < piv.length; i++)
-                piv[i] = 0x00;
+            return;
         }
+
+        System.arraycopy(iv, 0, piv, 0, iv.length);
+        for (int i = iv.length; i < piv.length; i++)
+            piv[i] = 0x00;
     }
 
     private void serpent24() {
-        data[0] = convertToInt(piv, 0);
-        data[1] = convertToInt(piv, 4);
-        data[2] = convertToInt(piv, 8);
-        data[3] = convertToInt(piv, 12);
+        data[0] = Converter.convertToInt(piv, 0);
+        data[1] = Converter.convertToInt(piv, 4);
+        data[2] = Converter.convertToInt(piv, 8);
+        data[3] = Converter.convertToInt(piv, 12);
 
         for (int i = 0; i < 24; i++) {
             serpentRound(i);
@@ -125,22 +128,21 @@ class Sosemanuk {
         s[1] = subKeys[24][2] ^ data[2];
         s[0] = subKeys[24][3] ^ data[3];
 
-        MainWindow.getArea().append("s9: " + s[9] + "\n");
-        MainWindow.getArea().append("s8: " + s[8] + "\n");
-        MainWindow.getArea().append("s7: " + s[7] + "\n");
-        MainWindow.getArea().append("s6: " + s[6] + "\n");
-        MainWindow.getArea().append("s5: " + s[5] + "\n");
-        MainWindow.getArea().append("s4: " + s[4] + "\n");
-        MainWindow.getArea().append("s3: " + s[3] + "\n");
-        MainWindow.getArea().append("s2: " + s[2] + "\n");
-        MainWindow.getArea().append("s1: " + s[1] + "\n");
-        MainWindow.getArea().append("s0: " + s[0] + "\n");
-        MainWindow.getArea().append("R1: " + R1 + "\n");
-        MainWindow.getArea().append("R2: " + R2 + "\n");
+        MainWindow.print("s9: " + s[9] + "\n");
+        MainWindow.print("s8: " + s[8] + "\n");
+        MainWindow.print("s7: " + s[7] + "\n");
+        MainWindow.print("s6: " + s[6] + "\n");
+        MainWindow.print("s5: " + s[5] + "\n");
+        MainWindow.print("s4: " + s[4] + "\n");
+        MainWindow.print("s3: " + s[3] + "\n");
+        MainWindow.print("s2: " + s[2] + "\n");
+        MainWindow.print("s1: " + s[1] + "\n");
+        MainWindow.print("s0: " + s[0] + "\n");
+        MainWindow.print("R1: " + R1 + "\n");
+        MainWindow.print("R2: " + R2 + "\n");
     }
 
     private void serpentRound(int index) {
-
         data[0] = subKeys[index][0] ^ data[0];
         data[1] = subKeys[index][1] ^ data[1];
         data[2] = subKeys[index][2] ^ data[2];
@@ -160,19 +162,6 @@ class Sosemanuk {
         data[2] = Integer.rotateLeft(data[2], 22);
     }
 
-
-    private void FSMstep(int t) {
-        int temp = R1;
-        R1 = (R2 + ((R1 & 0x01) == 0 ? s[(t + 1) % 10] : s[(t + 1) % 10] ^ s[(t + 8) % 10]));
-        R2 = Integer.rotateLeft(temp * 0x54655307, 7);
-        f[t % 4] = (s[(t + 9) % 10] + R1) ^ R2;
-    }
-
-    private void LFSRstep(int t) {
-        s[(t + 10) % 10] = s[(t + 9) % 10] ^ (s[(t + 3) % 10] >>> 8) ^ (AlphaOperations.divisionByAlpha[s[(t + 3) % 10] & 0xFF])
-                ^ (s[t % 10] << 8) ^ (AlphaOperations.muliplicationByAlpha[s[t % 10] >>> 24]);
-    }
-
     private void workflow() {
         byte[][] output = new byte[40][4];
         for (int k = 0; k < 10; k++) {
@@ -186,19 +175,24 @@ class Sosemanuk {
             int[] z = SerpentBitsliceSBox.sb2(f[0], f[1], f[2], f[3], f[0]);
 
             for (int i = 0; i < 4; i++) {
-                output[4 * k + i] = convertToByte(z[i] ^ sOld[i]);
+                output[4 * k + i] = Converter.convertToByte(z[i] ^ sOld[i]);
             }
         }
+
+        Stoper.stop();
+        MainWindow.print("Time: " + Stoper.getTime() + " miliseconds\n");
+        Formatter.printResult(output);
     }
 
-    private byte[] convertToByte(int value) {
-        byte[] byteValue = new byte[4];
+    private void FSMstep(int t) {
+        int temp = R1;
+        R1 = (R2 + ((R1 & 0x01) == 0 ? s[(t + 1) % 10] : s[(t + 1) % 10] ^ s[(t + 8) % 10]));
+        R2 = Integer.rotateLeft(temp * 0x54655307, 7);
+        f[t % 4] = (s[(t + 9) % 10] + R1) ^ R2;
+    }
 
-        byteValue[0] = (byte) value;
-        byteValue[1] = (byte) (value >> 8);
-        byteValue[2] = (byte) (value >> 16);
-        byteValue[3] = (byte) (value >> 24);
-
-        return byteValue;
+    private void LFSRstep(int t) {
+        s[(t + 10) % 10] = s[(t + 9) % 10] ^ (s[(t + 3) % 10] >>> 8) ^ (AlphaOperations.divisionByAlpha[s[(t + 3) % 10] & 0xFF])
+                ^ (s[t % 10] << 8) ^ (AlphaOperations.muliplicationByAlpha[s[t % 10] >>> 24]);
     }
 }

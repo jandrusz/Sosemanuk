@@ -4,6 +4,6 @@ import java.awt.*;
 
 public class App {
     public static void main(String[] args) {
-         EventQueue.invokeLater(() -> MainWindow.getInstance());
+        EventQueue.invokeLater(() -> MainWindow.getInstance());
     }
 }
