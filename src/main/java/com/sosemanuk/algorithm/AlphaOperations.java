@@ -1,4 +1,4 @@
-package com.sosemanuk;
+package com.sosemanuk.algorithm;
 
 class AlphaOperations {
 

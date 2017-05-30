@@ -1,5 +1,7 @@
 package com.sosemanuk;
 
+import com.sosemanuk.gui.MainWindow;
+
 import java.awt.*;
 
 public class App {

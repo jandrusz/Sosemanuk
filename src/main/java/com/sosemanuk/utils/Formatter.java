@@ -1,6 +1,6 @@
 package com.sosemanuk.utils;
 
-import com.sosemanuk.MainWindow;
+import com.sosemanuk.gui.MainWindow;
 
 public class Formatter {
 

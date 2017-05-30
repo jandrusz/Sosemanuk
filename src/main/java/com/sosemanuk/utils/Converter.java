@@ -16,7 +16,7 @@ public class Converter {
                 | ((key[i + 1] & 0xFF) << 8) | (key[i] & 0xFF);
     }
 
-    public static byte[] convertTwoDimToOneDim(byte[][] twoDimArray) {
+    static byte[] convertTwoDimToOneDim(byte[][] twoDimArray) {
         byte[] oneDimArray = new byte[160];
         int count = 0;
         for (int i = 0; i < 40; i++)
