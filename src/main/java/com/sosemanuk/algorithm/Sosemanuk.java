@@ -1,10 +1,12 @@
 package com.sosemanuk.algorithm;
 
-import com.sosemanuk.gui.MainWindow;
 import com.sosemanuk.utils.Converter;
-import com.sosemanuk.utils.Formatter;
+import com.sosemanuk.utils.PrintUtil;
 import com.sosemanuk.utils.Stoper;
 
+/**
+ * TODO
+ */
 public class Sosemanuk {
 
     private int[][] subKeys = new int[25][4];
@@ -21,20 +23,37 @@ public class Sosemanuk {
 
     private int R2 = 0;
 
+    /**
+     * Metoda rozpoczynająca pracę algorytmu.
+     *
+     * @param key          klucz
+     * @param initialValue wartość inicjalna
+     */
     public void start(byte[] key, byte[] initialValue) {
         keySchedule(key);
-        setInitialValue(initialValue);
-        serpent24();
+        serpent24(prepareInitialValue(initialValue));
         workflow();
     }
 
-    public static byte[] getKey(byte[] inputKey) {
+    /**
+     * Metoda pobiera od użytkownika klucz.
+     *
+     * @param inputKey klucz
+     * @return odpowiednio zmodyfikowany klucz
+     */
+    public static byte[] prepareKey(byte[] inputKey) {
         if (inputKey.length < 0 || inputKey.length > 32) {
-            MainWindow.print("INPUT KEY should be longer/shorter");
+            PrintUtil.print("INPUT KEY should be longer/shorter");
         }
         return inputKey.length == 32 ? inputKey : expandKeyTo32Bytes(inputKey);
     }
 
+    /**
+     * Metoda rozszerza klucz jeśli jest on za krótki.
+     *
+     * @param key klucz
+     * @return rozszerzony klucz
+     */
     private static byte[] expandKeyTo32Bytes(byte[] key) {
         byte[] expandedKey = new byte[32];
         System.arraycopy(key, 0, expandedKey, 0, key.length);
@@ -42,6 +61,13 @@ public class Sosemanuk {
         return addFollowingZeros(expandedKey, key.length + 1);
     }
 
+    /**
+     * Metoda dodaje zera do tablicy bitów.
+     *
+     * @param array         tablica bitów
+     * @param startPosition pozycja tablicy od której mają być dodawane zera
+     * @return tablica bitów dopełniona zerami
+     */
     private static byte[] addFollowingZeros(byte[] array, int startPosition) {
         for (int i = startPosition; i < array.length; i++) {
             array[i] = 0x00;
@@ -49,6 +75,11 @@ public class Sosemanuk {
         return array;
     }
 
+    /**
+     * TODO
+     *
+     * @param key klucz
+     */
     private void keySchedule(byte[] key) {
         int[] w = new int[100];
 
@@ -76,22 +107,31 @@ public class Sosemanuk {
         }
     }
 
-    private void setInitialValue(byte[] initialValue) {
+    /**
+     * Metoda pobiera wartość inicjalną i przygotowuje.
+     *
+     * @param initialValue wartość inicjalna
+     * @return odpowiednio zmodyfikowana wartość inicjalna
+     */
+    private byte[] prepareInitialValue(byte[] initialValue) {
         if (initialValue.length > 16) {
-            MainWindow.print("bad INITIAL VALUE length: " + initialValue.length);
-            return;
+            PrintUtil.print("bad INITIAL VALUE length: " + initialValue.length);
         }
 
         if (initialValue.length == 16) {
-            pInitialValue = initialValue;
-            return;
+            return initialValue;
         }
 
         System.arraycopy(initialValue, 0, pInitialValue, 0, initialValue.length);
-        pInitialValue = addFollowingZeros(pInitialValue, initialValue.length);
+        return addFollowingZeros(pInitialValue, initialValue.length);
     }
 
-    private void serpent24() {
+    /**
+     * TODO
+     *
+     * @param pInitialValue TODO
+     */
+    private void serpent24(byte[] pInitialValue) {
         for (int i = 0; i < 4; i++) {
             data[i] = Converter.convertToInt(pInitialValue, i * 4);
         }
@@ -120,6 +160,11 @@ public class Sosemanuk {
         s[0] = subKeys[24][3] ^ data[3];
     }
 
+    /**
+     * Metoda reprezentująca jedną rundę algorytmu Serpent.
+     *
+     * @param index TODO
+     */
     private void serpentRound(int index) {
         for (int i = 0; i < 4; i++) {
             data[i] = subKeys[index][i] ^ data[i];
@@ -139,6 +184,9 @@ public class Sosemanuk {
         data[2] = Integer.rotateLeft(data[2], 22);
     }
 
+    /**
+     * TODO
+     */
     private void workflow() {
         byte[][] output = new byte[40][4];
         for (int k = 0; k < 10; k++) {
@@ -157,10 +205,15 @@ public class Sosemanuk {
         }
 
         Stoper.stop();
-        MainWindow.print("Time: " + Stoper.getTime() + " miliseconds\n");
-        Formatter.printResult(output);
+        PrintUtil.print("Time: " + Stoper.getTime() + " miliseconds\n");
+        PrintUtil.printResult(output);
     }
 
+    /**
+     * Metoda reprezentująca jeden krok FSM.
+     *
+     * @param t TODO
+     */
     private void FSMstep(int t) {
         int temp = R1;
         R1 = (R2 + ((R1 & 0x01) == 0 ? s[(t + 1) % 10] : s[(t + 1) % 10] ^ s[(t + 8) % 10]));
@@ -168,8 +221,13 @@ public class Sosemanuk {
         f[t % 4] = (s[(t + 9) % 10] + R1) ^ R2;
     }
 
+    /**
+     * Metoda reprezentująca jeden krok LFSR.
+     *
+     * @param t TODO
+     */
     private void LFSRstep(int t) {
         s[(t + 10) % 10] = s[(t + 9) % 10] ^ (s[(t + 3) % 10] >>> 8) ^ (AlphaOperations.divisionByAlpha[s[(t + 3) % 10] & 0xFF])
-                ^ (s[t % 10] << 8) ^ (AlphaOperations.muliplicationByAlpha[s[t % 10] >>> 24]);
+                ^ (s[t % 10] << 8) ^ (AlphaOperations.multiplicationByAlpha[s[t % 10] >>> 24]);
     }
 }
