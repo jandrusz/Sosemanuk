@@ -1,20 +1,20 @@
 package com.sosemanuk.algorithm;
 
 /**
- * TODO
+ * Klasa zawierająca sBox'y.
  */
 class SerpentBitsliceSBox {
 
     /**
-     * TODO
+     * Funkcja określająca który sBox zostanie wybrany
      *
-     * @param index
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param index numer sBoxa
+     * @param r0    wejście nr 0
+     * @param r1    wejście nr 1
+     * @param r2    wejście nr 2
+     * @param r3    wejście nr 3
+     * @param r4    wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sBox(int index, int r0, int r1, int r2, int r3, int r4) {
         switch (index) {
@@ -40,14 +40,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 0
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb0(int r0, int r1, int r2, int r3, int r4) {
         r3 ^= r0;
@@ -73,14 +73,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 1
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb1(int r0, int r1, int r2, int r3, int r4) {
         r0 = ~r0;
@@ -106,14 +106,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 2
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb2(int r0, int r1, int r2, int r3, int r4) {
         r4 = r0;
@@ -137,14 +137,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 3
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb3(int r0, int r1, int r2, int r3, int r4) {
         r4 = r0;
@@ -171,14 +171,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 4
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb4(int r0, int r1, int r2, int r3, int r4) {
         r1 ^= r3;
@@ -206,14 +206,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 5
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb5(int r0, int r1, int r2, int r3, int r4) {
         r0 ^= r1;
@@ -240,14 +240,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 6
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb6(int r0, int r1, int r2, int r3, int r4) {
         r2 = ~r2;
@@ -273,14 +273,14 @@ class SerpentBitsliceSBox {
     }
 
     /**
-     * TODO
+     * sBox nr 7
      *
-     * @param r0
-     * @param r1
-     * @param r2
-     * @param r3
-     * @param r4
-     * @return
+     * @param r0 wejście nr 0
+     * @param r1 wejście nr 1
+     * @param r2 wejście nr 2
+     * @param r3 wejście nr 3
+     * @param r4 wejście nr 4
+     * @return zwracana wartość
      */
     static int[] sb7(int r0, int r1, int r2, int r3, int r4) {
         r4 = r1;

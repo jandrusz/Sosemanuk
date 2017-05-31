@@ -17,7 +17,7 @@ public class PrintUtil {
      *
      * @param byteArray dwuwymiarowa tablica bitów
      */
-    public static void printResult(byte[][] byteArray) {
+    private static void printResult(byte[][] byteArray) {
         byte[] array = Converter.convertTwoDimensionalToOneDimensional(byteArray);
 
         print("Result: \n");
@@ -29,6 +29,61 @@ public class PrintUtil {
             }
             print("\n");
         }
+    }
+
+    /**
+     * Funkcja służąca do wyświetlania klucza
+     *
+     * @param byteArray tablica bitów
+     */
+    private static void printInputKey(byte[] byteArray) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 8; j++) {
+                int v = byteArray[i * 4 + j] & 0xFF;
+                print((" " + hexnum[v >> 4])
+                        + hexnum[v & 0x0F]);
+            }
+            print("\n");
+        }
+    }
+
+    /**
+     * Funkcja służąca do wyświetlania wartości inicjalnej
+     *
+     * @param byteArray tablica bitów
+     */
+    private static void printInitialValue(byte[] byteArray) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                int v = byteArray[i * 4 + j] & 0xFF;
+                print((" " + hexnum[v >> 4])
+                        + hexnum[v & 0x0F]);
+            }
+            print("\n");
+        }
+    }
+
+    /**
+     * Funkca służacą do wyświetlania danych początkowych
+     *
+     * @param inputKey     klucz
+     * @param initialValue wartość inicjalna
+     */
+    public static void showInputData(byte[] inputKey, byte[] initialValue) {
+        PrintUtil.print("Input key: \n");
+        printInputKey(inputKey);
+        PrintUtil.print("Initial value: \n");
+        printInitialValue(initialValue);
+    }
+
+    /**
+     * Funkcja wyświetlająca wynik działania szyfru.
+     *
+     * @param output tablica z zaszyfrowanym kluczem
+     */
+    public static void getResult(byte[][] output) {
+        print("Time: " + Stoper.getTime() + " miliseconds\n");
+        printResult(output);
     }
 
     /**

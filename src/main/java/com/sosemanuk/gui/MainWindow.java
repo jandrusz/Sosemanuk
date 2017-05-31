@@ -13,31 +13,20 @@ import java.util.Objects;
  */
 public class MainWindow {
 
-    private static MainWindow instance = null;
+    private Sosemanuk sosemanuk;
 
-    private static Sosemanuk sosemanuk;
+    private JTextField inputKeyTextField;
 
-    private static JTextField inputKeyTextField;
-
-    private static JTextField initialValueTextField;
+    private JTextField initialValueTextField;
 
     private static JTextArea area;
 
     /**
      * Konstruktor klasy.
      */
-    private MainWindow() {
+    public MainWindow() {
         buildMainFrame();
         sosemanuk = new Sosemanuk();
-    }
-
-    /**
-     * Funkca umożliwiająca uzyskanie instancji klasy MainFrame.
-     *
-     * @return isntancja klasy MainWindow
-     */
-    public static MainWindow getInstance() {
-        return Objects.isNull(instance) ? new MainWindow() : instance;
     }
 
     /**
@@ -46,41 +35,31 @@ public class MainWindow {
     private void buildMainFrame() {
         JFrame frame = new JFrame();
         setFrameProperties(frame);
-        setContentPaneProperties(frame);
-        addComponentToContentPane(frame, getInputKeyTextField());
-        addComponentToContentPane(frame, getInitialValueTextField());
-        addComponentToContentPane(frame, getLabelForInputKeyTextField());
-        addComponentToContentPane(frame, getLabelForInitialVectorTextField());
-        addComponentToContentPane(frame, getTextArea());
-        addComponentToContentPane(frame, getStartButton());
+        frame.add(getInputKeyTextField());
+        frame.add(getInitialValueTextField());
+        frame.add(getLabelForInputKeyTextField());
+        frame.add(getLabelForInitialVectorTextField());
+        frame.add(getTextArea());
+        frame.add(getScroll());
+        frame.add(getStartButton());
     }
 
     /**
      * Metoda ustawiająca właściwości ramki interfejsu.
      *
-     * @param frame obiekt JFrame któremu chcemy nadać odpowiednie własćiwości.
+     * @param frame obiekt JFrame któremu chcemy nadać odpowiednie własćiwości
      */
     private void setFrameProperties(JFrame frame) {
         frame.setTitle("Sosemanuk");
         frame.setBounds(400, 200, 900, 600);
+        frame.setBackground(Color.LIGHT_GRAY);
+        frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
     /**
-     * TODO
-     *
-     * @param frame TODO
-     */
-    private void setContentPaneProperties(JFrame frame) {
-        frame.getContentPane().setBackground(Color.LIGHT_GRAY);
-        frame.getContentPane().setForeground(Color.LIGHT_GRAY);
-        frame.getContentPane().setFont(new Font("Arial", Font.PLAIN, 16));
-        frame.getContentPane().setLayout(null);
-    }
-
-    /**
-     * Metoda odpowiedzialna za ustawienie włąścości przycisku "start".
+     * Metoda odpowiedzialna za ustawienie właściwości przycisku "start".
      *
      * @return odpowiednio sformatowany obiekt klasy JButton
      */
@@ -95,18 +74,18 @@ public class MainWindow {
     }
 
     /**
-     * TODO
+     * Metoda ustawiająca nasłuichiwnie na wydarzenie po wciśnięciu przycisku start
      *
-     * @param button TODO
+     * @param button obiekt klasy JButton któremu przypisujemy wykonanie metody po naciśnięciu przycisku
      */
     private void setListenerForButton(JButton button) {
         button.addActionListener(e -> startAlgorithm());
     }
 
     /**
-     * TODO
+     * Metoda odpowiedzialna za ustawienie właściwości pola tekstowego
      *
-     * @return TODO
+     * @return odpowiednio sformatowane pole inputKeyTextField
      */
     private JTextField getInputKeyTextField() {
         inputKeyTextField = new JTextField();
@@ -117,9 +96,9 @@ public class MainWindow {
     }
 
     /**
-     * TODO
+     * Metoda odpowiedzialna za ustawienie właściwości pola tekstowego
      *
-     * @return TODO
+     * @return odpowiednio sformatowane pole initialValueTextField
      */
     private JTextField getInitialValueTextField() {
         initialValueTextField = new JTextField();
@@ -130,9 +109,9 @@ public class MainWindow {
     }
 
     /**
-     * TODO
+     * Metoda odpowiedzialna za ustawienie właściwości belki z tekstem.
      *
-     * @return TODO
+     * @return odpowiednio sformatowany obiekt klasy JLabel
      */
     private JLabel getLabelForInputKeyTextField() {
         JLabel label = new JLabel("Input key:");
@@ -143,9 +122,9 @@ public class MainWindow {
     }
 
     /**
-     * TODO
+     * Metoda odpowiedzialna za ustawienie właściwości belki z tekstem.
      *
-     * @return TODO
+     * @return odpowiednio sformatowany obiekt klasy JLabel
      */
     private JLabel getLabelForInitialVectorTextField() {
         JLabel label = new JLabel("Initial value:");
@@ -156,9 +135,9 @@ public class MainWindow {
     }
 
     /**
-     * TODO
+     * Metoda odpowiedzialna za ustawienie właściwości pola tekstowego
      *
-     * @return TODO
+     * @return odpowiednio sformatowane pole area
      */
     private JTextArea getTextArea() {
         area = new JTextArea();
@@ -171,6 +150,18 @@ public class MainWindow {
     }
 
     /**
+     * Metoda odpowiedzialna za ustawienie właściwości paska przwijania.
+     *
+     * @return odpowiednio sformatowany obiekt klasy JScrollPane
+     */
+    private JScrollPane getScroll() {
+        JScrollPane scroll = new JScrollPane(area,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setBounds(425, 10, 450, 540);
+        return scroll;
+    }
+
+    /**
      * @return pole area
      */
     public static JTextArea getArea() {
@@ -178,34 +169,28 @@ public class MainWindow {
     }
 
     /**
-     * TODO
-     *
-     * @param frame     TODO
-     * @param component TODO
-     */
-    private void addComponentToContentPane(JFrame frame, JComponent component) {
-        frame.getContentPane().add(component);
-    }
-
-    /**
      * Metoda rozpoczynająca pracę algorytmu.
      */
     private void startAlgorithm() {
         clearTextArea();
-
         byte[] inputKey;
         byte[] initialValue;
 
+        Stoper.reset();
         if (shouldUseUserValues()) {
             PrintUtil.print("The entered values were used \n");
+            Stoper.start();
             inputKey = Sosemanuk.prepareKey(inputKeyTextField.getText().getBytes());
-            initialValue = initialValueTextField.getText().getBytes();
+            initialValue = Sosemanuk.prepareInitialValue(initialValueTextField.getText().getBytes());
         } else {
             PrintUtil.print("Default values were used \n");
+            Stoper.start();
             inputKey = Sosemanuk.prepareKey(getDefaultInputKey());
-            initialValue = getDefaultInitialValue();
+            initialValue = Sosemanuk.prepareInitialValue(getDefaultInitialValue());
         }
 
+        Stoper.stop();
+        PrintUtil.showInputData(inputKey, initialValue);
         Stoper.start();
         sosemanuk.start(inputKey, initialValue);
     }

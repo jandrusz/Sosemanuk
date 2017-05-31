@@ -20,15 +20,15 @@ public class Converter {
     }
 
     /**
-     * TODO
+     * Metoda konwertująca tablicę bitów na wartość typu int.
      *
-     * @param key TODO
-     * @param i TODO
+     * @param array tablica do przekonwertowania
+     * @param i     the input offset TODO
      * @return wartość tablicy bitów w formacie int
      */
-    public static int convertToInt(byte[] key, int i) {
-        return ((key[i + 3] & 0xFF) << 24) | ((key[i + 2] & 0xFF) << 16)
-                | ((key[i + 1] & 0xFF) << 8) | (key[i] & 0xFF);
+    public static int convertToInt(byte[] array, int i) {
+        return ((array[i + 3] & 0xFF) << 24) | ((array[i + 2] & 0xFF) << 16)
+                | ((array[i + 1] & 0xFF) << 8) | (array[i] & 0xFF);
     }
 
     /**

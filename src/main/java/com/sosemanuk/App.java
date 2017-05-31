@@ -12,6 +12,6 @@ public class App {
      * Metoda inicjalizująca główne okno programu
      */
     public static void main(String[] args) {
-        EventQueue.invokeLater(() -> MainWindow.getInstance());
+        EventQueue.invokeLater(() -> new MainWindow());
     }
 }

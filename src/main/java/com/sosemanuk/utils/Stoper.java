@@ -8,7 +8,7 @@ public class Stoper {
 
     private static long timeStart;
 
-    private static long timeStop;
+    private static long totalTime;
 
     /**
      * Metoda startująca stoper.
@@ -21,16 +21,15 @@ public class Stoper {
      * Metoda zatrzymująca stoper.
      */
     public static void stop() {
-        timeStop = System.currentTimeMillis();
+        totalTime += System.currentTimeMillis() - timeStart;
     }
 
     /**
-     * Metoda umożliwiająca pobranie czasu jaki minął od momentu wywołania metody {@link #start()}.
-     *
-     * @return Czas jaki minął od startu stopera.
+     * Funkcja resetująca stoper.
      */
-    public static long getTimeFromStart() {
-        return System.currentTimeMillis() - timeStart;
+    public static void reset() {
+        timeStart = 0;
+        totalTime = 0;
     }
 
     /**
@@ -38,7 +37,7 @@ public class Stoper {
      *
      * @return czas w milisekundach
      */
-    public static long getTime() {
-        return timeStop - timeStart;
+    static long getTime() {
+        return totalTime;
     }
 }

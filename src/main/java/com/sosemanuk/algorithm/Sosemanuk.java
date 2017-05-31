@@ -5,13 +5,11 @@ import com.sosemanuk.utils.PrintUtil;
 import com.sosemanuk.utils.Stoper;
 
 /**
- * TODO
+ * Klasa odpowiedzialna za wszystkie operacje związane z działaniem szyfru Sosemanuk
  */
 public class Sosemanuk {
 
     private int[][] subKeys = new int[25][4];
-
-    private byte[] pInitialValue = new byte[16];
 
     private int[] s = new int[10];
 
@@ -31,7 +29,7 @@ public class Sosemanuk {
      */
     public void start(byte[] key, byte[] initialValue) {
         keySchedule(key);
-        serpent24(prepareInitialValue(initialValue));
+        serpent24(initialValue);
         workflow();
     }
 
@@ -76,7 +74,7 @@ public class Sosemanuk {
     }
 
     /**
-     * TODO
+     * Metoda generująca 25 128bitowych kluczy które będą wykorzystane w metodzie {@link #serpent24(byte[])} ()}
      *
      * @param key klucz
      */
@@ -113,7 +111,8 @@ public class Sosemanuk {
      * @param initialValue wartość inicjalna
      * @return odpowiednio zmodyfikowana wartość inicjalna
      */
-    private byte[] prepareInitialValue(byte[] initialValue) {
+    public static byte[] prepareInitialValue(byte[] initialValue) {
+        byte[] extendedInitialValue = new byte[16];
         if (initialValue.length > 16) {
             PrintUtil.print("bad INITIAL VALUE length: " + initialValue.length);
         }
@@ -122,14 +121,14 @@ public class Sosemanuk {
             return initialValue;
         }
 
-        System.arraycopy(initialValue, 0, pInitialValue, 0, initialValue.length);
-        return addFollowingZeros(pInitialValue, initialValue.length);
+        System.arraycopy(initialValue, 0, extendedInitialValue, 0, initialValue.length);
+        return addFollowingZeros(extendedInitialValue, initialValue.length);
     }
 
     /**
-     * TODO
+     * Metoda reprezentująca 24 pierwsze rundy algorytmu Serpent
      *
-     * @param pInitialValue TODO
+     * @param pInitialValue wartość inicjalna
      */
     private void serpent24(byte[] pInitialValue) {
         for (int i = 0; i < 4; i++) {
@@ -163,7 +162,7 @@ public class Sosemanuk {
     /**
      * Metoda reprezentująca jedną rundę algorytmu Serpent.
      *
-     * @param index TODO
+     * @param index określa numer wykorzystanego sBox
      */
     private void serpentRound(int index) {
         for (int i = 0; i < 4; i++) {
@@ -185,34 +184,42 @@ public class Sosemanuk {
     }
 
     /**
-     * TODO
+     * Metoda reprezentująca 10 przejść przez układ szyfrujący
      */
     private void workflow() {
         byte[][] output = new byte[40][4];
         for (int k = 0; k < 10; k++) {
-            int[] sOld = new int[]{s[(4 * k) % 10], s[(4 * k + 1) % 10], s[(4 * k + 2) % 10], s[(4 * k + 3) % 10]};
+            oneRoundOfCipher(output, k);
+        }
+        Stoper.stop();
+        PrintUtil.getResult(output);
+    }
 
-            for (int i = 0; i < 4; i++) {
-                FSMstep(4 * k + i);
-                LFSRstep(4 * k + i);
-            }
+    /**
+     * Metoda reprezentująca 1 przejście przez układ szyfrujący.
+     *
+     * @param output klucz do zaszyfrowania
+     * @param k      numer przejścia
+     */
+    private void oneRoundOfCipher(byte[][] output, int k) {
+        int[] sOld = new int[]{s[(4 * k) % 10], s[(4 * k + 1) % 10], s[(4 * k + 2) % 10], s[(4 * k + 3) % 10]};
 
-            int[] z = SerpentBitsliceSBox.sb2(f[0], f[1], f[2], f[3], f[0]);
-
-            for (int i = 0; i < 4; i++) {
-                output[4 * k + i] = Converter.convertToByte(z[i] ^ sOld[i]);
-            }
+        for (int i = 0; i < 4; i++) {
+            FSMstep(4 * k + i);
+            LFSRstep(4 * k + i);
         }
 
-        Stoper.stop();
-        PrintUtil.print("Time: " + Stoper.getTime() + " miliseconds\n");
-        PrintUtil.printResult(output);
+        int[] z = SerpentBitsliceSBox.sb2(f[0], f[1], f[2], f[3], f[0]);
+
+        for (int i = 0; i < 4; i++) {
+            output[4 * k + i] = Converter.convertToByte(z[i] ^ sOld[i]);
+        }
     }
 
     /**
      * Metoda reprezentująca jeden krok FSM.
      *
-     * @param t TODO
+     * @param t dyskretna reprezentacja czasu TODO
      */
     private void FSMstep(int t) {
         int temp = R1;
@@ -224,10 +231,10 @@ public class Sosemanuk {
     /**
      * Metoda reprezentująca jeden krok LFSR.
      *
-     * @param t TODO
+     * @param t dyskretna reprezentacja czasu TODO
      */
     private void LFSRstep(int t) {
-        s[(t + 10) % 10] = s[(t + 9) % 10] ^ (s[(t + 3) % 10] >>> 8) ^ (AlphaOperations.divisionByAlpha[s[(t + 3) % 10] & 0xFF])
-                ^ (s[t % 10] << 8) ^ (AlphaOperations.multiplicationByAlpha[s[t % 10] >>> 24]);
+        s[(t + 10) % 10] = s[(t + 9) % 10] ^ (s[(t + 3) % 10] >>> 8) ^ (Operations.divisionByAlpha[s[(t + 3) % 10] & 0xFF])
+                ^ (s[t % 10] << 8) ^ (Operations.multiplicationByAlpha[s[t % 10] >>> 24]);
     }
 }

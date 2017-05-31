@@ -1,9 +1,9 @@
 package com.sosemanuk.algorithm;
 
 /**
- * TODO
+ * Klasa zawierająca pola potrzebne do obliczenia kroków LFSR TODO
  */
-class AlphaOperations {
+class Operations {
 
     static int multiplicationByAlpha[] = {
             0x00000000, 0xE19FCF13, 0x6B973726, 0x8A08F835,
