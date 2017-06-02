@@ -1,7 +1,9 @@
 package com.sosemanuk.algorithm;
 
 /**
- * Klasa zawierająca pola potrzebne do obliczenia kroków LFSR TODO
+ * Klasa zawierająca pola potrzebne do obliczenia kroków LFSR.
+ * Alfa to pierwiastek wielomianu pierwotnego
+ * P(X) = X^4 ^ beta^23 * X^2 + beta^245 * X^2 + beta^48 * X + beta^239 w GF(2^8)[X]
  */
 class Operations {
 

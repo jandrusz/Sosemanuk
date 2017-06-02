@@ -20,7 +20,7 @@ public class PrintUtil {
     private static void printResult(byte[][] byteArray) {
         byte[] array = Converter.convertTwoDimensionalToOneDimensional(byteArray);
 
-        print("Result: \n");
+        print("Wynik: \n");
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 16; j++) {
                 int v = array[i * 16 + j] & 0xFF;
@@ -70,9 +70,9 @@ public class PrintUtil {
      * @param initialValue wartość inicjalna
      */
     public static void showInputData(byte[] inputKey, byte[] initialValue) {
-        PrintUtil.print("Input key: \n");
+        PrintUtil.print("Klucz wejściowy: \n");
         printInputKey(inputKey);
-        PrintUtil.print("Initial value: \n");
+        PrintUtil.print("Wartość inicjalna: \n");
         printInitialValue(initialValue);
     }
 
@@ -82,7 +82,8 @@ public class PrintUtil {
      * @param output tablica z zaszyfrowanym kluczem
      */
     public static void getResult(byte[][] output) {
-        print("Time: " + Stoper.getTime() + " miliseconds\n");
+        print("\nPODSUMOWANIE \n");
+        print("Czas: " + Stoper.getTime() + " ms \n");
         printResult(output);
     }
 

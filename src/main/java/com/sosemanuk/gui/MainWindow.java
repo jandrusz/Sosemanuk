@@ -178,12 +178,12 @@ public class MainWindow {
 
         Stoper.reset();
         if (shouldUseUserValues()) {
-            PrintUtil.print("The entered values were used \n");
+            PrintUtil.print("Wykorzystano wprowadzone dane \n");
             Stoper.start();
             inputKey = Sosemanuk.prepareKey(inputKeyTextField.getText().getBytes());
             initialValue = Sosemanuk.prepareInitialValue(initialValueTextField.getText().getBytes());
         } else {
-            PrintUtil.print("Default values were used \n");
+            PrintUtil.print("Wykorzystano dane domyślne \n");
             Stoper.start();
             inputKey = Sosemanuk.prepareKey(getDefaultInputKey());
             initialValue = Sosemanuk.prepareInitialValue(getDefaultInitialValue());

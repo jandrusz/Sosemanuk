@@ -23,7 +23,7 @@ public class Converter {
      * Metoda konwertująca tablicę bitów na wartość typu int.
      *
      * @param array tablica do przekonwertowania
-     * @param i     the input offset TODO
+     * @param i     przesunięcie
      * @return wartość tablicy bitów w formacie int
      */
     public static int convertToInt(byte[] array, int i) {

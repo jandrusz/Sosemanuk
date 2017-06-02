@@ -25,7 +25,7 @@ public class Sosemanuk {
      * Metoda rozpoczynająca pracę algorytmu.
      *
      * @param key          klucz
-     * @param initialValue wartość inicjalna
+     * @param initialValue wartość początkowa
      */
     public void start(byte[] key, byte[] initialValue) {
         keySchedule(key);
@@ -40,8 +40,10 @@ public class Sosemanuk {
      * @return odpowiednio zmodyfikowany klucz
      */
     public static byte[] prepareKey(byte[] inputKey) {
-        if (inputKey.length < 0 || inputKey.length > 32) {
-            PrintUtil.print("INPUT KEY should be longer/shorter");
+        if (inputKey.length == 0) {
+            PrintUtil.print("Klucz wejściowy nie może być pusty");
+        } else if (inputKey.length > 32){
+            PrintUtil.print("Klucz wejściowy jest zbyt długi");
         }
         return inputKey.length == 32 ? inputKey : expandKeyTo32Bytes(inputKey);
     }
@@ -53,6 +55,9 @@ public class Sosemanuk {
      * @return rozszerzony klucz
      */
     private static byte[] expandKeyTo32Bytes(byte[] key) {
+        Stoper.stop();
+        PrintUtil.print("Rozszerzanie klucza wejściowego\n");
+        Stoper.start();
         byte[] expandedKey = new byte[32];
         System.arraycopy(key, 0, expandedKey, 0, key.length);
         expandedKey[key.length] = 0x01;
@@ -74,11 +79,14 @@ public class Sosemanuk {
     }
 
     /**
-     * Metoda generująca 25 128bitowych kluczy które będą wykorzystane w metodzie {@link #serpent24(byte[])} ()}
+     * Metoda generująca 25 128-bitowych kluczy, które będą wykorzystane w metodzie {@link #serpent24(byte[])} ()}
      *
      * @param key klucz
      */
     private void keySchedule(byte[] key) {
+        Stoper.stop();
+        PrintUtil.print("Generowanie 25 128-bitowych podkluczy\n");
+        Stoper.start();
         int[] w = new int[100];
 
         for (int i = 0; i < 8; i++) {
@@ -114,13 +122,15 @@ public class Sosemanuk {
     public static byte[] prepareInitialValue(byte[] initialValue) {
         byte[] extendedInitialValue = new byte[16];
         if (initialValue.length > 16) {
-            PrintUtil.print("bad INITIAL VALUE length: " + initialValue.length);
+            PrintUtil.print("Wartość początkowa jest za długa: " + initialValue.length);
         }
 
         if (initialValue.length == 16) {
             return initialValue;
         }
-
+        Stoper.stop();
+        PrintUtil.print("Rozszerzanie wartości inicjalnej...\n");
+        Stoper.start();
         System.arraycopy(initialValue, 0, extendedInitialValue, 0, initialValue.length);
         return addFollowingZeros(extendedInitialValue, initialValue.length);
     }
@@ -131,6 +141,9 @@ public class Sosemanuk {
      * @param pInitialValue wartość inicjalna
      */
     private void serpent24(byte[] pInitialValue) {
+        Stoper.stop();
+        PrintUtil.print("Przejście 24 rund algorytmu Serpent w celu ustawienia wartości początkowch LFSR i FSM\n");
+        Stoper.start();
         for (int i = 0; i < 4; i++) {
             data[i] = Converter.convertToInt(pInitialValue, i * 4);
         }
@@ -187,8 +200,14 @@ public class Sosemanuk {
      * Metoda reprezentująca 10 przejść przez układ szyfrujący
      */
     private void workflow() {
+        Stoper.stop();
+        PrintUtil.print("Główna pętla szyfru\n");
+        Stoper.start();
         byte[][] output = new byte[40][4];
         for (int k = 0; k < 10; k++) {
+            Stoper.stop();
+            PrintUtil.print("Runda nr " + (k +1) + " \n");
+            Stoper.start();
             oneRoundOfCipher(output, k);
         }
         Stoper.stop();
@@ -198,19 +217,25 @@ public class Sosemanuk {
     /**
      * Metoda reprezentująca 1 przejście przez układ szyfrujący.
      *
-     * @param output klucz do zaszyfrowania
+     * @param output wyjście szyfru
      * @param k      numer przejścia
      */
     private void oneRoundOfCipher(byte[][] output, int k) {
         int[] sOld = new int[]{s[(4 * k) % 10], s[(4 * k + 1) % 10], s[(4 * k + 2) % 10], s[(4 * k + 3) % 10]};
 
         for (int i = 0; i < 4; i++) {
+            Stoper.stop();
+            PrintUtil.print("   Nowe wartości w LFSR i FSM\n");
+            Stoper.start();
             FSMstep(4 * k + i);
             LFSRstep(4 * k + i);
         }
 
         int[] z = SerpentBitsliceSBox.sb2(f[0], f[1], f[2], f[3], f[0]);
 
+        Stoper.stop();
+        PrintUtil.print("   Uzupełnienie danych wyjściowych\n");
+        Stoper.start();
         for (int i = 0; i < 4; i++) {
             output[4 * k + i] = Converter.convertToByte(z[i] ^ sOld[i]);
         }
@@ -219,7 +244,7 @@ public class Sosemanuk {
     /**
      * Metoda reprezentująca jeden krok FSM.
      *
-     * @param t dyskretna reprezentacja czasu TODO
+     * @param t dyskretna reprezentacja czasu
      */
     private void FSMstep(int t) {
         int temp = R1;
@@ -231,7 +256,11 @@ public class Sosemanuk {
     /**
      * Metoda reprezentująca jeden krok LFSR.
      *
-     * @param t dyskretna reprezentacja czasu TODO
+     * Mnożenie przez alfa odpowiada przesunięciu o 8 bitów z psi w lewo oraz wykoananiu operacji XOR z 32-bitową maską zależną jedynie od najbardziej znaczącego bajtu
+     * Dzielenie przez alfa odpowiada przesunięciu o 8 bitów z psi w prawo, XOR z 32-bitową maską, która zależy od najmniej znaczącego bajtu psi.
+     * @param
+     * t dyskretna reprezentacja czasu TODO
+     *
      */
     private void LFSRstep(int t) {
         s[(t + 10) % 10] = s[(t + 9) % 10] ^ (s[(t + 3) % 10] >>> 8) ^ (Operations.divisionByAlpha[s[(t + 3) % 10] & 0xFF])
