@@ -43,7 +43,8 @@ public class Sosemanuk {
         if (inputKey.length == 0) {
             PrintUtil.print("Klucz wejściowy nie może być pusty");
         } else if (inputKey.length > 32) {
-            PrintUtil.print("Klucz wejściowy jest zbyt długi");
+            PrintUtil.print("Klucz wejściowy jest zbyt długi (powyżej 32 znaków): " + inputKey.length);
+            throw new Error();
         }
         return inputKey.length == 32 ? inputKey : expandKeyTo32Bytes(inputKey);
     }
@@ -122,7 +123,8 @@ public class Sosemanuk {
     public static byte[] prepareInitialValue(byte[] initialValue) {
         byte[] extendedInitialValue = new byte[16];
         if (initialValue.length > 16) {
-            PrintUtil.print("Wartość początkowa jest za długa: " + initialValue.length);
+            PrintUtil.print("Wartość inicjalna jest za długa (powyżej 16 znaków): " + initialValue.length);
+            throw new Error();
         }
 
         if (initialValue.length == 16) {

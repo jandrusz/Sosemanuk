@@ -83,7 +83,13 @@ public class PrintUtil {
      */
     public static void getResult(byte[][] output) {
         print("\nPODSUMOWANIE \n");
-        print("Czas: " + Stoper.getTime() + " ms \n");
+        String czas;
+        if (Stoper.getTime() == 0)
+            czas = "<1 ms";
+        else {
+            czas = Stoper.getTime() + " ms";
+        }
+        print("Czas: " + czas + "\n");
         printResult(output);
     }
 
