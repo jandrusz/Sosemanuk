@@ -42,7 +42,7 @@ public class Sosemanuk {
     public static byte[] prepareKey(byte[] inputKey) {
         if (inputKey.length == 0) {
             PrintUtil.print("Klucz wejściowy nie może być pusty");
-        } else if (inputKey.length > 32){
+        } else if (inputKey.length > 32) {
             PrintUtil.print("Klucz wejściowy jest zbyt długi");
         }
         return inputKey.length == 32 ? inputKey : expandKeyTo32Bytes(inputKey);
@@ -142,7 +142,7 @@ public class Sosemanuk {
      */
     private void serpent24(byte[] pInitialValue) {
         Stoper.stop();
-        PrintUtil.print("Przejście 24 rund algorytmu Serpent w celu ustawienia wartości początkowch LFSR i FSM\n");
+        PrintUtil.print("Przejście 24 rund algorytmu Serpent \nw celu ustawienia wartości początkowch LFSR i FSM\n");
         Stoper.start();
         for (int i = 0; i < 4; i++) {
             data[i] = Converter.convertToInt(pInitialValue, i * 4);
@@ -206,7 +206,7 @@ public class Sosemanuk {
         byte[][] output = new byte[40][4];
         for (int k = 0; k < 10; k++) {
             Stoper.stop();
-            PrintUtil.print("Runda nr " + (k +1) + " \n");
+            PrintUtil.print("Runda nr " + (k + 1) + " \n");
             Stoper.start();
             oneRoundOfCipher(output, k);
         }
@@ -255,12 +255,10 @@ public class Sosemanuk {
 
     /**
      * Metoda reprezentująca jeden krok LFSR.
-     *
      * Mnożenie przez alfa odpowiada przesunięciu o 8 bitów z psi w lewo oraz wykoananiu operacji XOR z 32-bitową maską zależną jedynie od najbardziej znaczącego bajtu
      * Dzielenie przez alfa odpowiada przesunięciu o 8 bitów z psi w prawo, XOR z 32-bitową maską, która zależy od najmniej znaczącego bajtu psi.
-     * @param
-     * t dyskretna reprezentacja czasu TODO
      *
+     * @param t reprezentacja czasu
      */
     private void LFSRstep(int t) {
         s[(t + 10) % 10] = s[(t + 9) % 10] ^ (s[(t + 3) % 10] >>> 8) ^ (Operations.divisionByAlpha[s[(t + 3) % 10] & 0xFF])
