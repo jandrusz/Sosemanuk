@@ -1,5 +1,6 @@
 package com.sosemanuk.algorithm;
 
+import com.sosemanuk.gui.MainWindow;
 import com.sosemanuk.utils.Converter;
 import com.sosemanuk.utils.PrintUtil;
 import com.sosemanuk.utils.Stoper;
@@ -20,6 +21,8 @@ public class Sosemanuk {
     private int R1 = 0;
 
     private int R2 = 0;
+
+    private byte[] encryptedFile;
 
     /**
      * Metoda rozpoczynająca pracę algorytmu.
@@ -213,7 +216,20 @@ public class Sosemanuk {
             oneRoundOfCipher(output, k);
         }
         Stoper.stop();
-        PrintUtil.getResult(output);
+
+        byte[] oneDimOutput = Converter.convertTwoDimensionalToOneDimensional(output);
+
+        encryptedFile = new byte[MainWindow.getFile().length];
+        int j = 0;
+        for (int i = 0; i < MainWindow.getFile().length; i++) {
+            encryptedFile[i] = (byte) (oneDimOutput[j] ^ MainWindow.getFile()[i]);
+            j = j > 158 ? 0 : j + 1;
+        }
+        PrintUtil.getResult();
+    }
+
+    public byte[] getEncodedFile() {
+        return encryptedFile;
     }
 
     /**

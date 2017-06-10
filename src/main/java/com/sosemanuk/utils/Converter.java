@@ -1,5 +1,8 @@
 package com.sosemanuk.utils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 /**
  * Klasa odpowiedzialna za wszelkie konwersje danych.
  */
@@ -37,7 +40,7 @@ public class Converter {
      * @param twoDimensionalArray dwuwymiarowa tablica bitów
      * @return tablica bitów
      */
-    static byte[] convertTwoDimensionalToOneDimensional(byte[][] twoDimensionalArray) {
+    public static byte[] convertTwoDimensionalToOneDimensional(byte[][] twoDimensionalArray) {
         byte[] oneDimArray = new byte[160];
         int count = 0;
         for (int i = 0; i < 40; i++)
@@ -46,6 +49,21 @@ public class Converter {
                 count++;
             }
         return oneDimArray;
+    }
+
+    /**
+     * Metoda służąca do przekonwertowania pliku na tablice bitów
+     *
+     * @param path ścieżka do pliku
+     * @return tablica bitów
+     * @throws Exception
+     */
+    public static byte[] convertFileToBytes(Path path) throws Exception {
+        try {
+            return Files.readAllBytes(path);
+        } catch (Exception e) {
+            throw new Exception();
+        }
     }
 
 }

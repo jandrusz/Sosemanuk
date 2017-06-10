@@ -13,25 +13,6 @@ public class PrintUtil {
     };
 
     /**
-     * Funkcja pobiera dwuwymiarową tablicę bitów i drukuje wynik w formacie HEX w GUI.
-     *
-     * @param byteArray dwuwymiarowa tablica bitów
-     */
-    private static void printResult(byte[][] byteArray) {
-        byte[] array = Converter.convertTwoDimensionalToOneDimensional(byteArray);
-
-        print("Wynik: \n");
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 16; j++) {
-                int v = array[i * 16 + j] & 0xFF;
-                print((" " + hexnum[v >> 4])
-                        + hexnum[v & 0x0F]);
-            }
-            print("\n");
-        }
-    }
-
-    /**
      * Funkcja służąca do wyświetlania klucza
      *
      * @param byteArray tablica bitów
@@ -78,11 +59,9 @@ public class PrintUtil {
 
     /**
      * Funkcja wyświetlająca wynik działania szyfru.
-     *
-     * @param output tablica z zaszyfrowanym kluczem
      */
-    public static void getResult(byte[][] output) {
-        print("\nPODSUMOWANIE \n");
+    public static void getResult() {
+        print("\nZAKOŃCZONO \n");
         String czas;
         if (Stoper.getTime() == 0)
             czas = "<1 ms";
@@ -90,7 +69,6 @@ public class PrintUtil {
             czas = Stoper.getTime() + " ms";
         }
         print("Czas: " + czas + "\n");
-        printResult(output);
     }
 
     /**

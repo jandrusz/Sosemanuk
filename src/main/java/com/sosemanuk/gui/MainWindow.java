@@ -1,11 +1,16 @@
 package com.sosemanuk.gui;
 
 import com.sosemanuk.algorithm.Sosemanuk;
+import com.sosemanuk.utils.Converter;
 import com.sosemanuk.utils.PrintUtil;
 import com.sosemanuk.utils.Stoper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 /**
@@ -21,6 +26,12 @@ public class MainWindow {
 
     private static JTextArea area;
 
+    JFrame frame;
+
+    FileDialog fileDialog;
+
+    private static byte[] file;
+
     /**
      * Konstruktor klasy.
      */
@@ -33,7 +44,7 @@ public class MainWindow {
      * Metoda budująca interfejs użytkownika.
      */
     private void buildMainFrame() {
-        JFrame frame = new JFrame();
+        frame = new JFrame();
         setFrameProperties(frame);
         frame.add(getInputKeyTextField());
         frame.add(getInitialValueTextField());
@@ -41,7 +52,9 @@ public class MainWindow {
         frame.add(getLabelForInitialVectorTextField());
         frame.add(getTextArea());
         frame.add(getScroll());
-        frame.add(getStartButton());
+        frame.add(getEncodeDecodeButton());
+        frame.add(getImportButton());
+        frame.add(getSaveButton());
     }
 
     /**
@@ -59,27 +72,133 @@ public class MainWindow {
     }
 
     /**
-     * Metoda odpowiedzialna za ustawienie właściwości przycisku "start".
+     * Metoda odpowiedzialna za ustawienie właściwości przycisku "Zaszyfruj/Odszyfruj".
      *
      * @return odpowiednio sformatowany obiekt klasy JButton
      */
-    private JButton getStartButton() {
-        JButton button = new JButton("Start");
+    private JButton getEncodeDecodeButton() {
+        JButton button = new JButton("Zaszyfruj/Odszyfruj");
         button.setForeground(Color.BLACK);
         button.setBackground(SystemColor.menu);
         button.setFont(new Font("Arial", Font.PLAIN, 16));
-        button.setBounds(20, 500, 380, 50);
-        setListenerForButton(button);
+        button.setBounds(20, 440, 380, 50);
+        setListenerForEncodeDecodeButton(button);
         return button;
     }
 
     /**
-     * Metoda ustawiająca nasłuichiwnie na wydarzenie po wciśnięciu przycisku start
+     * Metoda odpowiedzialna za ustawienie właściwości przycisku "Wybierz plik".
+     *
+     * @return odpowiednio sformatowany obiekt klasy JButton
+     */
+    private JButton getImportButton() {
+        JButton button = new JButton("Wybierz plik");
+        button.setForeground(Color.BLACK);
+        button.setBackground(SystemColor.menu);
+        button.setFont(new Font("Arial", Font.PLAIN, 16));
+        button.setBounds(20, 380, 380, 50);
+        setListenerForImportButton(button);
+        return button;
+    }
+
+    /**
+     * Metoda odpowiedzialna za ustawienie właściwości przycisku "Zapisz plik na dysku".
+     *
+     * @return odpowiednio sformatowany obiekt klasy JButton
+     */
+    private JButton getSaveButton() {
+        JButton button = new JButton("Zapisz plik na dysku");
+        button.setForeground(Color.BLACK);
+        button.setBackground(SystemColor.menu);
+        button.setFont(new Font("Arial", Font.PLAIN, 16));
+        button.setBounds(20, 500, 380, 50);
+        setListenerForSaveButton(button);
+        return button;
+    }
+
+    /**
+     * Metoda ustawiająca nasłuichiwnie na wydarzenie po wciśnięciu przycisku Zaszyfruj/Odszyfruj
      *
      * @param button obiekt klasy JButton któremu przypisujemy wykonanie metody po naciśnięciu przycisku
      */
-    private void setListenerForButton(JButton button) {
-        button.addActionListener(e -> startAlgorithm());
+    private void setListenerForEncodeDecodeButton(JButton button) {
+        button.addActionListener(e -> {
+            if (fileIsPresenet()) {
+                startAlgorithm();
+            } else {
+                clearTextArea();
+                PrintUtil.print("Najpierw wybierz plik\n");
+            }
+        });
+    }
+
+    /**
+     * Metoda ustawiająca nasłuichiwnie na wydarzenie po wciśnięciu przycisku Wybierz plik
+     *
+     * @param button obiekt klasy JButton któremu przypisujemy wykonanie metody po naciśnięciu przycisku
+     */
+    private void setListenerForImportButton(JButton button) {
+        button.addActionListener(e -> {
+            try {
+                importAndConvertFile();
+            } catch (Exception e1) {
+                e1.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * Metoda ustawiająca nasłuichiwnie na wydarzenie po wciśnięciu przycisku Zapisz plik
+     *
+     * @param button obiekt klasy JButton któremu przypisujemy wykonanie metody po naciśnięciu przycisku
+     */
+    private void setListenerForSaveButton(JButton button) {
+        button.addActionListener(e -> {
+            if (fileIsPresenet()) {
+                saveFile();
+            } else {
+                clearTextArea();
+                PrintUtil.print("Najpierw wybierz plik\n");
+            }
+        });
+    }
+
+    /**
+     * Metoda służąca do zapisu zaszyfrowanego pliku
+     */
+    private void saveFile() {
+        fileDialog = new FileDialog(frame, "Zapisz plik", FileDialog.SAVE);
+        fileDialog.setVisible(true);
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(fileDialog.getDirectory() + fileDialog.getFile());
+            fileOutputStream.write(sosemanuk.getEncodedFile());
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metoda służąca do pobrania od użytkownika pliku do zaszyfrowania
+     *
+     * @throws Exception
+     */
+    private void importAndConvertFile() throws Exception {
+        fileDialog = new FileDialog(frame, "Wybierz plik", FileDialog.LOAD);
+        fileDialog.setVisible(true);
+        Path path = Paths.get(fileDialog.getDirectory() + fileDialog.getFile());
+        if (Objects.nonNull(fileDialog.getFile())) {
+            file = Converter.convertFileToBytes(path);
+        }
+    }
+
+    public static byte[] getFile() {
+        return file;
+    }
+
+    private boolean fileIsPresenet() {
+        return Objects.nonNull(file);
     }
 
     /**
