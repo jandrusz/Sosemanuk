@@ -54,9 +54,9 @@ public class PrintUtil {
      * @param initialValue wartość inicjalna
      */
     public static void showInputData(byte[] inputKey, byte[] initialValue) {
-        PrintUtil.print("Klucz wejściowy: \n");
+        PrintUtil.print("Input key: \n");
         printInputKey(inputKey);
-        PrintUtil.print("Wartość inicjalna: \n");
+        PrintUtil.print("Initial value: \n");
         printInitialValue(initialValue);
     }
 
@@ -64,14 +64,14 @@ public class PrintUtil {
      * Funkcja wyświetlająca wynik działania szyfru.
      */
     public static void getResult() {
-        print("\nZAKOŃCZONO - " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\n");
+        print("\nFINISHED - " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\n");
         String czas;
-        if (Stoper.getTime() == 0)
+        if (Stopwatch.getTime() == 0)
             czas = "<1 ms";
         else {
-            czas = Stoper.getTime() + " ms";
+            czas = Stopwatch.getTime() + " ms";
         }
-        print("Czas: " + czas + "\n");
+        print("Time: " + czas + "\n");
     }
 
     /**

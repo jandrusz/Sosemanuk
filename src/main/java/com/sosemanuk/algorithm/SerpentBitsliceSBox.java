@@ -49,7 +49,7 @@ class SerpentBitsliceSBox {
      * @param r4 wejście nr 4
      * @return wartość
      */
-    static int[] sb0(int r0, int r1, int r2, int r3, int r4) {
+    private static int[] sb0(int r0, int r1, int r2, int r3, int r4) {
         r3 ^= r0;
         r4 = r1;
         r1 &= r3;
@@ -82,7 +82,7 @@ class SerpentBitsliceSBox {
      * @param r4 wejście nr 4
      * @return wartość
      */
-    static int[] sb1(int r0, int r1, int r2, int r3, int r4) {
+    private static int[] sb1(int r0, int r1, int r2, int r3, int r4) {
         r0 = ~r0;
         r2 = ~r2;
         r4 = r0;
@@ -146,7 +146,7 @@ class SerpentBitsliceSBox {
      * @param r4 wejście nr 4
      * @return wartość
      */
-    static int[] sb3(int r0, int r1, int r2, int r3, int r4) {
+    private static int[] sb3(int r0, int r1, int r2, int r3, int r4) {
         r4 = r0;
         r0 |= r3;
         r3 ^= r1;
@@ -180,7 +180,7 @@ class SerpentBitsliceSBox {
      * @param r4 wejście nr 4
      * @return wartość
      */
-    static int[] sb4(int r0, int r1, int r2, int r3, int r4) {
+    private static int[] sb4(int r0, int r1, int r2, int r3, int r4) {
         r1 ^= r3;
         r3 = ~r3;
         r2 ^= r3;
@@ -215,7 +215,7 @@ class SerpentBitsliceSBox {
      * @param r4 wejście nr 4
      * @return wartość
      */
-    static int[] sb5(int r0, int r1, int r2, int r3, int r4) {
+    private static int[] sb5(int r0, int r1, int r2, int r3, int r4) {
         r0 ^= r1;
         r1 ^= r3;
         r3 = ~r3;
@@ -249,7 +249,7 @@ class SerpentBitsliceSBox {
      * @param r4 wejście nr 4
      * @return wartość
      */
-    static int[] sb6(int r0, int r1, int r2, int r3, int r4) {
+    private static int[] sb6(int r0, int r1, int r2, int r3, int r4) {
         r2 = ~r2;
         r4 = r3;
         r3 &= r0;
@@ -282,7 +282,7 @@ class SerpentBitsliceSBox {
      * @param r4 wejście nr 4
      * @return wartość
      */
-    static int[] sb7(int r0, int r1, int r2, int r3, int r4) {
+    private static int[] sb7(int r0, int r1, int r2, int r3, int r4) {
         r4 = r1;
         r1 |= r2;
         r1 ^= r3;

@@ -3,7 +3,7 @@ package com.sosemanuk.algorithm;
 import com.sosemanuk.gui.MainWindow;
 import com.sosemanuk.utils.Converter;
 import com.sosemanuk.utils.PrintUtil;
-import com.sosemanuk.utils.Stoper;
+import com.sosemanuk.utils.Stopwatch;
 
 /**
  * Klasa odpowiedzialna za wszystkie operacje związane z działaniem szyfru Sosemanuk
@@ -18,11 +18,11 @@ public class Sosemanuk {
 
     private int[] data = new int[4];
 
+    private byte[] encodedFile;
+
     private int R1 = 0;
 
     private int R2 = 0;
-
-    private byte[] encryptedFile;
 
     /**
      * Metoda rozpoczynająca pracę algorytmu.
@@ -43,10 +43,8 @@ public class Sosemanuk {
      * @return odpowiednio zmodyfikowany klucz
      */
     public static byte[] prepareKey(byte[] inputKey) {
-        if (inputKey.length == 0) {
-            PrintUtil.print("Klucz wejściowy nie może być pusty");
-        } else if (inputKey.length > 32) {
-            PrintUtil.print("Klucz wejściowy jest zbyt długi (powyżej 32 znaków): " + inputKey.length);
+        if (inputKey.length > 32) {
+            PrintUtil.print("Input key is too long (over 32 characters): " + inputKey.length);
             throw new Error();
         }
         return inputKey.length == 32 ? inputKey : expandKeyTo32Bytes(inputKey);
@@ -59,9 +57,7 @@ public class Sosemanuk {
      * @return rozszerzony klucz
      */
     private static byte[] expandKeyTo32Bytes(byte[] key) {
-        Stoper.stop();
-        PrintUtil.print("Rozszerzanie klucza wejściowego\n");
-        Stoper.start();
+        PrintUtil.print("Extension of the input key\n");
         byte[] expandedKey = new byte[32];
         System.arraycopy(key, 0, expandedKey, 0, key.length);
         expandedKey[key.length] = 0x01;
@@ -88,9 +84,7 @@ public class Sosemanuk {
      * @param key klucz
      */
     private void keySchedule(byte[] key) {
-        Stoper.stop();
-        PrintUtil.print("Generowanie 25 128-bitowych podkluczy\n");
-        Stoper.start();
+        PrintUtil.print("Generation of 25 125-bit subkeys\n");
         int[] w = new int[100];
 
         for (int i = 0; i < 8; i++) {
@@ -126,16 +120,15 @@ public class Sosemanuk {
     public static byte[] prepareInitialValue(byte[] initialValue) {
         byte[] extendedInitialValue = new byte[16];
         if (initialValue.length > 16) {
-            PrintUtil.print("Wartość inicjalna jest za długa (powyżej 16 znaków): " + initialValue.length);
+            PrintUtil.print("Initial value is too long (over 16 characters): " + initialValue.length);
             throw new Error();
         }
 
         if (initialValue.length == 16) {
             return initialValue;
         }
-        Stoper.stop();
-        PrintUtil.print("Rozszerzanie wartości inicjalnej...\n");
-        Stoper.start();
+
+        PrintUtil.print("Extending initial value...\n");
         System.arraycopy(initialValue, 0, extendedInitialValue, 0, initialValue.length);
         return addFollowingZeros(extendedInitialValue, initialValue.length);
     }
@@ -146,9 +139,7 @@ public class Sosemanuk {
      * @param pInitialValue wartość inicjalna
      */
     private void serpent24(byte[] pInitialValue) {
-        Stoper.stop();
-        PrintUtil.print("Przejście 24 rund algorytmu Serpent \nw celu ustawienia wartości początkowch LFSR i FSM\n");
-        Stoper.start();
+        PrintUtil.print("24 rounds of Serpent algorithm \nin aim to set up initial values for LFSR and FSM\n");
         for (int i = 0; i < 4; i++) {
             data[i] = Converter.convertToInt(pInitialValue, i * 4);
         }
@@ -205,31 +196,41 @@ public class Sosemanuk {
      * Metoda reprezentująca 10 przejść przez układ szyfrujący
      */
     private void workflow() {
-        Stoper.stop();
-        PrintUtil.print("Główna pętla szyfru\n");
-        Stoper.start();
+        PrintUtil.print("Main loop of cipher\n");
         byte[][] output = new byte[40][4];
         for (int k = 0; k < 10; k++) {
-            Stoper.stop();
-            PrintUtil.print("Runda nr " + (k + 1) + " \n");
-            Stoper.start();
             oneRoundOfCipher(output, k);
         }
-        Stoper.stop();
-
         byte[] oneDimOutput = Converter.convertTwoDimensionalToOneDimensional(output);
-
-        encryptedFile = new byte[MainWindow.getFile().length];
-        int j = 0;
-        for (int i = 0; i < MainWindow.getFile().length; i++) {
-            encryptedFile[i] = (byte) (oneDimOutput[j] ^ MainWindow.getFile()[i]);
-            j = j > 158 ? 0 : j + 1;
-        }
+        encodedFile = encodeFile(oneDimOutput);
+        Stopwatch.stop();
         PrintUtil.getResult();
     }
 
+    /**
+     * Metoda kodująca zawartość pliku
+     *
+     * @param cryptogram szyfrogram powstały na podstawie klucza wejściowego i wartości inicjalnej
+     * @return zakodowana tablica bitów (plik)
+     */
+    private byte[] encodeFile(byte[] cryptogram) {
+        byte[] encodedArray = new byte[MainWindow.getOriginalFile().length];
+        byte[] originalArray = MainWindow.getOriginalFile();
+        int j = 0;
+        for (int i = 0; i < encodedArray.length; i++) {
+            encodedArray[i] = (byte) (cryptogram[j] ^ originalArray[i]);
+            j = j > 158 ? 0 : j + 1;
+        }
+        return encodedArray;
+    }
+
+    /**
+     * Metoda typu getter
+     *
+     * @return encodedFile
+     */
     public byte[] getEncodedFile() {
-        return encryptedFile;
+        return encodedFile;
     }
 
     /**
@@ -242,18 +243,12 @@ public class Sosemanuk {
         int[] sOld = new int[]{s[(4 * k) % 10], s[(4 * k + 1) % 10], s[(4 * k + 2) % 10], s[(4 * k + 3) % 10]};
 
         for (int i = 0; i < 4; i++) {
-            Stoper.stop();
-            PrintUtil.print("   Nowe wartości w LFSR i FSM\n");
-            Stoper.start();
             FSMstep(4 * k + i);
             LFSRstep(4 * k + i);
         }
 
         int[] z = SerpentBitsliceSBox.sb2(f[0], f[1], f[2], f[3], f[0]);
 
-        Stoper.stop();
-        PrintUtil.print("   Uzupełnienie danych wyjściowych\n");
-        Stoper.start();
         for (int i = 0; i < 4; i++) {
             output[4 * k + i] = Converter.convertToByte(z[i] ^ sOld[i]);
         }

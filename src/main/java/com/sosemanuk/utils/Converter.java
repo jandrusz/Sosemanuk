@@ -1,5 +1,6 @@
 package com.sosemanuk.utils;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -58,11 +59,11 @@ public class Converter {
      * @return tablica bitów
      * @throws Exception
      */
-    public static byte[] convertFileToBytes(Path path) throws Exception {
+    public static byte[] convertFileToBytes(Path path) throws IOException {
         try {
             return Files.readAllBytes(path);
-        } catch (Exception e) {
-            throw new Exception();
+        } catch (IOException e) {
+            throw new IOException(e);
         }
     }
 

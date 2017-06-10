@@ -4,7 +4,7 @@ package com.sosemanuk.utils;
  * Klasa pomocnicza umożliwiająca obliczenie czas jakiego
  * potrzebuje algorytm.
  */
-public class Stoper {
+public class Stopwatch {
 
     private static long timeStart;
 
