@@ -24,13 +24,17 @@ public class MainWindow {
 
     private JTextField initialValueTextField;
 
+    private JFrame frame;
+
+    private FileDialog fileDialog;
+
+    private JLabel label;
+
     private static JTextArea area;
 
-    JFrame frame;
-
-    FileDialog fileDialog;
-
     private static byte[] file;
+
+    Path path;
 
     /**
      * Konstruktor klasy.
@@ -55,6 +59,7 @@ public class MainWindow {
         frame.add(getEncodeDecodeButton());
         frame.add(getImportButton());
         frame.add(getSaveButton());
+        frame.add(getLabel());
     }
 
     /**
@@ -102,6 +107,18 @@ public class MainWindow {
     }
 
     /**
+     * Metoda odpowiedzialna za ustawienie właściwości labelki "Wybrany plik".
+     *
+     * @return odpowiednio sformatowany obiekt klasy JLabel
+     */
+    private JLabel getLabel() {
+        label = new JLabel();
+        label.setBounds(20, 340, 380, 50);
+        label.setText("Wybrany plik:");
+        return label;
+    }
+
+    /**
      * Metoda odpowiedzialna za ustawienie właściwości przycisku "Zapisz plik na dysku".
      *
      * @return odpowiednio sformatowany obiekt klasy JButton
@@ -141,6 +158,7 @@ public class MainWindow {
         button.addActionListener(e -> {
             try {
                 importAndConvertFile();
+                label.setText("Wybrany plik: " + path.getParent() + "\\" + path.getFileName());
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
@@ -187,8 +205,8 @@ public class MainWindow {
     private void importAndConvertFile() throws Exception {
         fileDialog = new FileDialog(frame, "Wybierz plik", FileDialog.LOAD);
         fileDialog.setVisible(true);
-        Path path = Paths.get(fileDialog.getDirectory() + fileDialog.getFile());
         if (Objects.nonNull(fileDialog.getFile())) {
+            path = Paths.get(fileDialog.getDirectory() + fileDialog.getFile());
             file = Converter.convertFileToBytes(path);
         }
     }

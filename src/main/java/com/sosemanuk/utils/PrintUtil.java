@@ -2,6 +2,9 @@ package com.sosemanuk.utils;
 
 import com.sosemanuk.gui.MainWindow;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Klasa odpowiedzialna za formatowanie tekstu i wyświetlenie go użytkownikowi.
  */
@@ -61,7 +64,7 @@ public class PrintUtil {
      * Funkcja wyświetlająca wynik działania szyfru.
      */
     public static void getResult() {
-        print("\nZAKOŃCZONO \n");
+        print("\nZAKOŃCZONO - " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\n");
         String czas;
         if (Stoper.getTime() == 0)
             czas = "<1 ms";
